@@ -31,29 +31,53 @@ function Note(props) {
     setEditable("true")
     setActionButton("Save")
   }
+
   function handleChange(event) {
-    //##Error message shows should use event.persist instead of event.currentTarget
-    // console.log(event.currentTarget.textContent)
-    const { name, textContent } = event.target;
-    console.log(name);
-    console.log(event.target.name);
+    const { localName, textContent } = event.target;
+    function name(input) {
+      if (input === "p") {
+        return "content"
+      } else {
+        return "title"
+      }
+    };
+    console.log(name(localName));
     console.log(textContent);
 
-    // setUpdateNote(prevNote => {
-    //   return {
-    //     ...prevNote,
-    //     [name]: textContent
-    //   };
-    // });
-    // console.log(updateNote);
+    setUpdateNote(prevNote => {
+      return {
+        ...prevNote,
+        [name(localName)]: textContent
+      };
+    });
+    console.log(updateNote);
+
+
+  }
+  function handleBlur(event) {
+    props.onBlur(updateNote)
+
   }
 
 
   return (
     <div className="note" >
 
-      <h1 name="title" onClick={initEdit} onInput={handleChange} value={updateNote.content} contentEditable={editable}>{props.title}</h1>
-      <p name="content" onClick={initEdit} onInput={handleChange} value={updateNote.content} contentEditable={editable}>{props.content}</p>
+      <h1
+        name="title"
+        onClick={initEdit}
+        onInput={handleChange}
+        onBlur={handleBlur}
+        value={updateNote.content}
+        contentEditable={editable}>{props.title}</h1>
+
+      <p
+        name="content"
+        onClick={initEdit}
+        onInput={handleChange}
+        onBlur={handleBlur}
+        value={updateNote.content}
+        contentEditable={editable}>{props.content}</p>
       <p className="time-mark">Last edited on {props.editOn}</p>
 
       <button onClick={handleAction}>{actionButton}</button>

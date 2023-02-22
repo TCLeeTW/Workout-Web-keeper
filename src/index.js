@@ -7,7 +7,7 @@ import App from "./components/App";
 ReactDOM.render(<App />, document.getElementById("root"));
 
 
-
+//Latest way of rendering React:
 // const root = ReactDOM.createRoot(document.getElementById('root'));
 // root.render(
 //     <React.StrictMode>
@@ -31,9 +31,9 @@ ReactDOM.render(<App />, document.getElementById("root"));
 //Self-Challenge:
 //Done: Connect to firebase and enable firestore. 
 //Add edit note feature     <--This is super hard!
-    //First need to turn the note into editable mode
-    //Second to update the editing back 
-    //save back to database
+    //First need to turn the note into editable mode-->Done
+    //Second to update the editing back -->Done
+    //save back to database-->Done
 //Add login feature, refer to secret tree hall. 
 //Render the notes by timestamp
 //Identify user, and only show the user's content, so that it can actually be used. 

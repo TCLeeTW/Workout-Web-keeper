@@ -4,7 +4,7 @@ import Footer from "./Footer";
 import Note from "./Note";
 import CreateArea from "./CreateArea";
 import { db } from "../firebase";
-import { collection, getDocs, addDoc, deleteDoc, doc, query, orderBy } from "firebase/firestore"
+import { collection, getDocs, addDoc, deleteDoc, updateDoc, doc, query, orderBy } from "firebase/firestore"
 
 
 function App() {
@@ -37,8 +37,18 @@ function App() {
 
 
   // //editing Note
-  const updateNote = async (id) => {
-    console.log("Save on "+id + " is clicked. logged on Edit note, app.js");
+  const updateNote = async (updateNote) => {
+    //passing updateNote from the note.jsx
+    //updateTarget is set for firebase function "updateDoc" to recognize which document to update. 
+    //It takes 3 parameter: the database, the collection and the document ID. 
+    const updateTarget = doc(db, "notes", updateNote.id)
+    const saveTime = new Date()
+    await updateDoc(updateTarget, {
+      title: updateNote.title,
+      content: updateNote.content,
+      time: saveTime
+    })
+    getData()
 
   }
 
@@ -66,6 +76,8 @@ function App() {
             editOn={Date(noteItem.time).toLocaleString("zh-CN")}
             onDelete={deleteNote}
             onUpdate={updateNote}
+            //the updateNote function will take place either user leave the editing, which is unBlur, or clikced save. 
+            onBlur={updateNote}
           />
         );
       })}

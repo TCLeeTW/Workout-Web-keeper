@@ -40,7 +40,7 @@ footer p {
   border-radius: 7px;
   box-shadow: 0 2px 5px #ccc;
   padding: 10px;
-  width: 240px;
+  width: 300px;
   margin: 16px;
   float: left;
 }
@@ -57,14 +57,18 @@ footer p {
 
 .note button {
   position: relative;
+  border-radius: 20px;
   float: right;
   margin-right: 10px;
-  color: #f5ba13;
+  color: #fff;
   border: none;
-  width: 36px;
+  width: 50px;
   height: 36px;
   cursor: pointer;
   outline: none;
+}
+.note button:hover {
+  color: #f5ba13;
 }
 
 form {
@@ -99,4 +103,8 @@ form button {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
   cursor: pointer;
   outline: none;
+}
+
+p.time-mark{
+  font-size:0.8em
 }
