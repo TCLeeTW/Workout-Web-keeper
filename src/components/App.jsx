@@ -4,7 +4,7 @@ import Footer from "./Footer";
 import Note from "./Note";
 import CreateArea from "./CreateArea";
 import { db } from "../firebase";
-import { collection, getDocs, addDoc, deleteDoc,  doc, query, orderBy } from "firebase/firestore"
+import { collection, getDocs, addDoc, deleteDoc, doc, query, orderBy } from "firebase/firestore"
 
 
 function App() {
@@ -15,13 +15,11 @@ function App() {
   //Load data from database
   const notesCollectionRef = collection(db, "notes")
   const getData = async () => {
-    const data = await getDocs(query(notesCollectionRef, orderBy('time',"desc")))
-    // const data = await notesCollectionRef.orderBy("time").get()
-    const arrayData = data.docs.map(doc => ({ id: doc.id, ...doc.data() }))
-    const notes = data.docs.map(doc => ({ ...doc.data() }))
-    console.log(data)
-    console.log(arrayData)
-    console.log(notes);
+    //In order to make the latest note shows the first, need to sort with time and descent. 
+    const data = await getDocs(query(notesCollectionRef, orderBy('time', "desc")))
+    //Map thru the docs get from database and put it into an array
+    const arrayData = data.docs.map(doc => ({ id: doc.id, ...doc.data(), editable: "false" }))
+    //Set the array to local var. 
     setNotes(arrayData)
   }
 
@@ -30,38 +28,26 @@ function App() {
   }, [])
 
   //Adding new note
-  const addNoteToDatabase = async (newNote) => {
-    const saveTime=new Date()
+  const addNote = async (newNote) => {
+    const saveTime = new Date()
     console.log(saveTime);
-    await addDoc(notesCollectionRef, { title: newNote.title, content: newNote.content,time:saveTime});
+    await addDoc(notesCollectionRef, { title: newNote.title, content: newNote.content, time: saveTime });
     getData()
   }
-  function addNote(newNote) {
-    addNoteToDatabase(newNote)
-    // setNotes(prevNotes => {
-    //   return [...prevNotes, newNote];
-    // });
-  }
+
 
   // //editing Note
-  function editNote(id) {
+  const updateNote = async (id) => {
+    console.log("Save on "+id + " is clicked. logged on Edit note, app.js");
 
   }
 
   //Delete existing note
 
-  const deleteNoteFromDatabase = async (id) => {
+  const deleteNote = async (id) => {
     const toDelete = doc(db, "notes", id)
     await deleteDoc(toDelete)
-  }
-  function deleteNote(deleteId) {
-    deleteNoteFromDatabase(deleteId)
-
-    setNotes(prevNotes => {
-      return prevNotes.filter((noteItem, index) => {
-        return noteItem.id !== deleteId;
-      });
-    });
+    getData()
   }
 
 
@@ -77,9 +63,9 @@ function App() {
             id={noteItem.id}
             title={noteItem.title}
             content={noteItem.content}
-            editOn={Date( noteItem.time)}
+            editOn={Date(noteItem.time).toLocaleString("zh-CN")}
             onDelete={deleteNote}
-            onEdit={editNote}
+            onUpdate={updateNote}
           />
         );
       })}

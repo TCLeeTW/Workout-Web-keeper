@@ -9,6 +9,8 @@ function CreateArea(props) {
 
   function handleChange(event) {
     const { name, value } = event.target;
+    console.log(name);
+    console.log(value);
 
     setNote(prevNote => {
       return {
@@ -16,6 +18,7 @@ function CreateArea(props) {
         [name]: value
       };
     });
+    console.log(note);
   }
 
   function submitNote(event) {
