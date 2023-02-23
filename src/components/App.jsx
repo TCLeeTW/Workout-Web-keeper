@@ -12,31 +12,35 @@ function App() {
   //Setup "notes" State
   const [notes, setNotes] = useState([]);
 
+  //CRUD of the notes
+  ////READ
   //Load data from database
   const notesCollectionRef = collection(db, "notes")
   const getData = async () => {
     //In order to make the latest note shows the first, need to sort with time and descent. 
     const data = await getDocs(query(notesCollectionRef, orderBy('time', "desc")))
+    console.log("App getData data "+data);
     //Map thru the docs get from database and put it into an array
     const arrayData = data.docs.map(doc => ({ id: doc.id, ...doc.data(), editable: "false" }))
+    console.log("App getData arrayData "+arrayData);
     //Set the array to local var. 
     setNotes(arrayData)
+    console.log("App getData notes "+notes)
   }
 
   useEffect(() => {
     getData()
   }, [])
 
-  //Adding new note
+  ////ADD
   const addNote = async (newNote) => {
     const saveTime = new Date()
-    console.log(saveTime);
     await addDoc(notesCollectionRef, { title: newNote.title, content: newNote.content, time: saveTime });
     getData()
   }
 
 
-  // //editing Note
+  ////EDIT
   const updateNote = async (updateNote) => {
     //passing updateNote from the note.jsx
     //updateTarget is set for firebase function "updateDoc" to recognize which document to update. 
@@ -52,7 +56,7 @@ function App() {
 
   }
 
-  //Delete existing note
+  ////DELETE
 
   const deleteNote = async (id) => {
     const toDelete = doc(db, "notes", id)
@@ -61,19 +65,19 @@ function App() {
   }
 
 
-
+  //Rendering the result
   return (
     <div>
       <Header />
       <CreateArea onAdd={addNote} />
-      {notes.map((noteItem, index) => {
+      {notes.map((noteItem) => {
+        console.log("note item time "+noteItem.time);
+        
         return (
           <Note
-            key={index}
+            key={noteItem.id}
             id={noteItem.id}
-            title={noteItem.title}
-            content={noteItem.content}
-            editOn={Date(noteItem.time).toLocaleString("zh-CN")}
+            {...noteItem}
             onDelete={deleteNote}
             onUpdate={updateNote}
             //the updateNote function will take place either user leave the editing, which is unBlur, or clikced save. 

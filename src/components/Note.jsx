@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-
+import { formatDate } from "../utils/dateUtils";
 function Note(props) {
 
   function handleAction() {
@@ -56,6 +56,7 @@ function Note(props) {
   }
   function handleBlur(event) {
     props.onBlur(updateNote)
+    setEditable( "false");
 
   }
 
@@ -78,7 +79,7 @@ function Note(props) {
         onBlur={handleBlur}
         value={updateNote.content}
         contentEditable={editable}>{props.content}</p>
-      <p className="time-mark">Last edited on {props.editOn}</p>
+      <p className="time-mark">Last edited on {formatDate(props.time)}</p>
 
       <button onClick={handleAction}>{actionButton}</button>
     </div>
