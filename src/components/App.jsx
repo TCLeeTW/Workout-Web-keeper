@@ -19,13 +19,10 @@ function App() {
   const getData = async () => {
     //In order to make the latest note shows the first, need to sort with time and descent. 
     const data = await getDocs(query(notesCollectionRef, orderBy('time', "desc")))
-    console.log("App getData data "+data);
     //Map thru the docs get from database and put it into an array
     const arrayData = data.docs.map(doc => ({ id: doc.id, ...doc.data(), editable: "false" }))
-    console.log("App getData arrayData "+arrayData);
     //Set the array to local var. 
     setNotes(arrayData)
-    console.log("App getData notes "+notes)
   }
 
   useEffect(() => {
@@ -71,8 +68,6 @@ function App() {
       <Header />
       <CreateArea onAdd={addNote} />
       {notes.map((noteItem) => {
-        console.log("note item time "+noteItem.time);
-        
         return (
           <Note
             key={noteItem.id}
