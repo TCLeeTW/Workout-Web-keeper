@@ -9,6 +9,8 @@ import { collection, getDocs, addDoc, deleteDoc, updateDoc, doc, query, orderBy 
 
 function App() {
 
+  
+
   //Setup "notes" State
   const [notes, setNotes] = useState([]);
 
