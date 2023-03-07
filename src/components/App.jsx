@@ -1,6 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom"
+import Start from "../pages/Start"
+import Keeper from "../pages/Keeper"
+import Login from "../pages/Login";
 import Header from "./Header";
 import Footer from "./Footer";
+
 import Note from "./Note";
 import CreateArea from "./CreateArea";
 import { db, signInwithGoogle } from "../firebase";
@@ -23,6 +28,7 @@ function App() {
       console.log("Please login to use this app")
     }
   }, [currentUser]);
+
 
 
   //Setup "notes" State
@@ -82,15 +88,18 @@ function App() {
     })
     getData()
 
-  }
 
-  ////DELETE
+  return (
 
-  const deleteNote = async (id) => {
-    const toDelete = doc(db, "notes", id)
-    await deleteDoc(toDelete)
-    getData()
-  }
+    <Router>
+      <Header/>
+      <Routes>
+        <Route path="/" element={<Start/>}/>
+        <Route path="/notes" element={<Keeper/>}/>
+        <Route path="/login" element={<Login/>}/>
+      </Routes>
+      <Footer/>
+    </Router>
 
 
   //Rendering the result
@@ -115,6 +124,7 @@ function App() {
       })}
       <Footer />
     </div>
+
   );
 }
 

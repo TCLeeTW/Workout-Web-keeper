@@ -11,6 +11,7 @@
     "react": "16.8.6",
     "react-dom": "16.8.6",
     "react-redux-firebase": "^3.1.1",
+    "react-router-dom": "^6.8.2",
     "react-scripts": "3.2.0",
     "redux-firestore": "^0.12.0"
   },
