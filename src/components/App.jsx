@@ -3,13 +3,27 @@ import Header from "./Header";
 import Footer from "./Footer";
 import Note from "./Note";
 import CreateArea from "./CreateArea";
-import { db } from "../firebase";
-import { collection, getDocs, addDoc, deleteDoc, updateDoc, doc, query, orderBy } from "firebase/firestore"
+import { db, signInwithGoogle } from "../firebase";
+import { collection, getDocs, addDoc, deleteDoc, updateDoc, doc, query, orderBy, where,get } from "firebase/firestore"
 
 
 function App() {
+  const [currentUser, setCurrentUser] = useState();
+  const loginWithGoogle = async () => {
+    const result = await signInwithGoogle();
+    const user = result.user.uid
+    setCurrentUser(user);
+  }
 
-  
+  useEffect(() => {
+    console.log(currentUser);
+    if(currentUser){
+      getData()
+    }else{
+      console.log("Please login to use this app")
+    }
+  }, [currentUser]);
+
 
   //Setup "notes" State
   const [notes, setNotes] = useState([]);
@@ -17,24 +31,38 @@ function App() {
   //CRUD of the notes
   ////READ
   //Load data from database
-  const notesCollectionRef = collection(db, "notes")
+  const notesCollectionRef = collection(db, "notes");
+
   const getData = async () => {
     //In order to make the latest note shows the first, need to sort with time and descent. 
-    const data = await getDocs(query(notesCollectionRef, orderBy('time', "desc")))
+    const data = await getDocs(query(
+      notesCollectionRef,
+      where("user","==",currentUser),
+      orderBy('time', "desc")))
     //Map thru the docs get from database and put it into an array
     const arrayData = data.docs.map(doc => ({ id: doc.id, ...doc.data(), editable: "false" }))
     //Set the array to local var. 
+
     setNotes(arrayData)
   }
 
   useEffect(() => {
-    getData()
+    if(currentUser){
+      getData()
+    }else{
+      console.log("Please login to use this app")
+    }
   }, [])
 
   ////ADD
   const addNote = async (newNote) => {
     const saveTime = new Date()
-    await addDoc(notesCollectionRef, { title: newNote.title, content: newNote.content, time: saveTime });
+    await addDoc(notesCollectionRef, {
+      user: currentUser,
+      title: newNote.title,
+      content: newNote.content,
+      time: saveTime
+    });
     getData()
   }
 
@@ -47,6 +75,7 @@ function App() {
     const updateTarget = doc(db, "notes", updateNote.id)
     const saveTime = new Date()
     await updateDoc(updateTarget, {
+      user: currentUser,
       title: updateNote.title,
       content: updateNote.content,
       time: saveTime
@@ -67,7 +96,9 @@ function App() {
   //Rendering the result
   return (
     <div>
-      <Header />
+      <Header
+        login={loginWithGoogle}
+      />
       <CreateArea onAdd={addNote} />
       {notes.map((noteItem) => {
         return (
@@ -88,26 +119,3 @@ function App() {
 }
 
 export default App;
-
-// //note here
-// //use Switch to go between different routes. 
-
-// const App = () => {
-//   return (
-//     <div>
-//       <Switch>
-//         <Route path="/" exact component={Home} />
-//         <Route path="/about" exact component={About} />
-//         <Route path="/brands" exact component={Brands} />
-//         <Route path="/guide" exact component={Guide} />
-//         <Route path="/contact" exact component={Contact} />
-
-//         <Route
-//           render={function() {
-//             return <p>Not found</p>;
-//           }}
-//         />
-//       </Switch>
-//     </div>
-//   );
-// };
